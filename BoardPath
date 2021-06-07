@@ -1,0 +1,79 @@
+/*Based on LeetCode challenge 1138, this program finds the fastest route to between letters on a board that is set up like so:
+a b c d e
+f g h i j
+k l m n o
+p q r s t
+u v w x y
+z
+The way I went about solving this is by getting the ASCII character number from each character and setting the board up as follows:
+0  1  2  3  4
+5  6  7  8  9
+10 11 12 13 14
+15 16 17 18 19
+20 21 22 23 24
+25
+
+The solution first finds the correct row to be in by casting division by 5 from both the current position and the letter to find, since each
+row is a multiple of 5
+From there, I found the right column by modulus since all columns return the same modulus.
+The only exception to this rule is the letter "z". Since we cannot exist in space beyond the number 26, we find the correct column first, than search
+for the correct row with z, since this will prevent us from ever going beyond the location of the number 25.
+*/
+
+class Solution {
+public:
+    string alphabetBoardPath(string target) {
+        string output;
+        int currentLetter = 0; //we always start the excersize on letter "a"
+        int targetInt;
+        for(int i = 0; i < target.length(); i++){
+            targetInt = (int)target[i];
+            targetInt = targetInt - 97; // "a" exists at ASCII 97, so we adjust for that
+            if(targetInt == currentLetter){
+                output = output + "!";
+            }
+            else{
+                while(currentLetter != targetInt){ //This accounts for the "z" problem described above.
+                    while((int)(targetInt/5) != (int)(currentLetter/5)){
+                        if((int)(targetInt/5) > (int)(currentLetter/5)){
+                            if(targetInt == 25){
+                                while(targetInt % 5 != currentLetter % 5){
+                                    if(targetInt % 5 > currentLetter % 5){
+                                        output = output + "R";
+                                        currentLetter++;
+                                    } 
+                                    else{
+                                        output = output + "L";
+                                        currentLetter--;
+                                    }
+                                }
+                            }
+                            output = output + "D";
+                            currentLetter = currentLetter + 5;
+                        }
+                        else{
+                            output = output + "U";
+                            currentLetter = currentLetter - 5;
+                        }
+                    }
+                    while(targetInt % 5 != currentLetter % 5){
+                        if(targetInt % 5 > currentLetter % 5){
+                            output = output + "R";
+                            currentLetter++;
+                        } 
+                        else{
+                            output = output + "L";
+                            currentLetter--;
+                        }
+                        
+                    }
+                }
+                output = output + "!";
+            }
+            
+        }
+        
+        return(output);
+        
+    }
+};
